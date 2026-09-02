@@ -1,0 +1,15 @@
+{
+  "name": "trilio-site-recovery-openstack",
+  "owner": {
+    "name": "Trilio",
+    "email": "support@trilio.io",
+    "url": "https://trilio.io"
+  },
+  "plugins": [
+    {
+      "name": "tsr-openstack-skill",
+      "source": ".",
+      "description": "Interactive operations guide for deploying, configuring, and running Trilio Site Recovery for OpenStack as a multi-site DR solution."
+    }
+  ]
+}

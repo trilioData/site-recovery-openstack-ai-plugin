@@ -1,0 +1,12 @@
+{
+  "name": "tsr-openstack-skill",
+  "description": "Interactive operations guide for deploying, configuring, and running Trilio Site Recovery for OpenStack as a multi-site DR solution.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Trilio",
+    "email": "support@trilio.io",
+    "url": "https://trilio.io"
+  },
+  "homepage": "https://github.com/trilioData/tsr-openstack-skill.git",
+  "license": "MIT"
+}
