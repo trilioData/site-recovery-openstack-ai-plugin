@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  KIT_REF: 0.1.0  # kit pin: keep equal in release.yml
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The kit is private, so reading it needs a token with read access to
+      # trilioData/trilio-agent-plugin-kit (org secret PLUGINKIT_TOKEN).
+      - uses: actions/checkout@v4
+        with:
+          repository: trilioData/trilio-agent-plugin-kit
+          ref: ${{ env.KIT_REF }}
+          token: ${{ secrets.PLUGINKIT_TOKEN }}
+          path: .pluginkit
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install pyyaml
+
+      - name: Warn when the kit pin is two or more versions old
+        env:
+          GH_TOKEN: ${{ secrets.PLUGINKIT_TOKEN }}
+        run: |
+          newer=$(git -C .pluginkit ls-remote --tags --refs origin 'refs/tags/[0-9]*' \
+            | sed 's#.*refs/tags/##' | sort -V | awk -v cur="$KIT_REF" 'f{n++} $0==cur{f=1} END{print n+0}')
+          if [ "$newer" -ge 2 ]; then
+            echo "::warning::Kit pin $KIT_REF is $newer releases behind. Bump KIT_REF in ci.yml and release.yml."
+          fi
+
+      - name: Validate plugin sources
+        run: python .pluginkit/pluginkit.py validate .
+
+      - name: Generated files match plugin.yaml
+        run: python .pluginkit/pluginkit.py generate --check .
+
+      - name: Tests
+        run: |
+          if [ -d tests ]; then python -m unittest discover -s tests -v; else echo "no tests/"; fi
+
+      - name: Package every plugin
+        run: |
+          for p in plugins/*/; do python .pluginkit/pluginkit.py package "$p" --out dist; done

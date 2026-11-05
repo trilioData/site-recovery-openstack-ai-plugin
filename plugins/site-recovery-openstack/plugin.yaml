@@ -1,0 +1,31 @@
+# Portable plugin source. `pluginkit generate` turns this into the files
+# Claude Code, Codex and Cursor each expect. Edit this, not those.
+name: site-recovery-openstack
+displayName: Trilio Site Recovery for OpenStack
+version: 1.0.0
+description: Helps coding agents deploy and operate Trilio Site Recovery for OpenStack.
+descriptions:
+  claude-code: Helps Claude Code deploy and operate Trilio Site Recovery for OpenStack, grounded in the official docs.
+author:
+  name: Trilio
+  email: support@trilio.io
+homepage: https://docs-tsr.trilio.io/trilio-site-recovery-for-openstack
+repository: https://github.com/trilioData/site-recovery-openstack-ai-plugin
+license: MIT
+keywords: [trilio, site-recovery, openstack, disaster-recovery, failover]
+category: Developer Tools
+
+targets: [claude-code, codex, cursor]
+
+# The official TSR for OpenStack docs, generated from the TSR source.
+mcpServers:
+  trilio-site-recovery-openstack-docs:
+    url: https://docs-tsr.trilio.io/api/mcp/trilio-site-recovery-for-openstack
+
+codex:
+  shortDescription: Deploy and operate Trilio Site Recovery for OpenStack
+  longDescription: Guides cloud admins through deployment, site registration and monitoring, and tenants through protection groups, failover, failback, test failover and RPO compliance, using the official TSR for OpenStack docs.
+  capabilities: [Read, Write]
+  websiteURL: https://trilio.io
+  defaultPrompt:
+    - Help me understand how to use Trilio Site Recovery for OpenStack.

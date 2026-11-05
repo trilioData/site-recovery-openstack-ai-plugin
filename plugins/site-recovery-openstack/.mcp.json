@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "trilio-site-recovery-openstack-docs": {
+      "type": "http",
+      "url": "https://docs-tsr.trilio.io/api/mcp/trilio-site-recovery-for-openstack"
+    }
+  }
+}
