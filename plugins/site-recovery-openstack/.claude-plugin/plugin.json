@@ -1,6 +1,6 @@
 {
   "name": "site-recovery-openstack",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Helps Claude Code deploy and operate Trilio Site Recovery for OpenStack, grounded in the official docs.",
   "author": {
     "name": "Trilio",

@@ -1,6 +1,6 @@
 {
   "name": "site-recovery-openstack",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Helps coding agents deploy and operate Trilio Site Recovery for OpenStack.",
   "author": {
     "name": "Trilio",
