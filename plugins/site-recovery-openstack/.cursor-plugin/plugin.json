@@ -1,0 +1,22 @@
+{
+  "name": "site-recovery-openstack",
+  "version": "0.1.0",
+  "description": "Helps coding agents deploy and operate Trilio Site Recovery for OpenStack.",
+  "author": {
+    "name": "Trilio",
+    "email": "support@trilio.io"
+  },
+  "homepage": "https://docs-tsr.trilio.io/trilio-site-recovery-for-openstack",
+  "repository": "https://github.com/trilioData/site-recovery-openstack-ai-plugin",
+  "license": "MIT",
+  "keywords": [
+    "trilio",
+    "site-recovery",
+    "openstack",
+    "disaster-recovery",
+    "failover"
+  ],
+  "displayName": "Trilio Site Recovery for OpenStack",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

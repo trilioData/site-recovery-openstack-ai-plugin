@@ -1,0 +1,8 @@
+# Eval cases for site-recovery-openstack. Each case is a prompt and what a correct answer must do.
+plugin: site-recovery-openstack
+cases:
+  - id: status-check
+    prompt: Is Trilio Site Recovery for OpenStack healthy in this environment?
+    expect:
+      - uses the trilio-site-recovery-openstack-docs MCP server or read-only `openstack dr` commands
+      - makes no changes to the environment

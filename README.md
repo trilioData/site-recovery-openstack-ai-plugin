@@ -1,12 +1,10 @@
-# Trilio Site Recovery for OpenStack — Claude Code Skill
+# site-recovery-openstack-ai-plugin
 
-A [Claude Code](https://claude.com/claude-code) skill that serves as an
-interactive operations guide for
-[Trilio Site Recovery for OpenStack](https://trilio.io). It walks cloud
-administrators through deployment, site registration, and monitoring, and
-walks tenants through protection groups, failover/failback, test failover, and
-RPO compliance — grounded in live product documentation via
-[git2docs](https://git2docs.com).
+The `site-recovery-openstack` agent plugin for
+[Trilio Site Recovery for OpenStack](https://docs-tsr.trilio.io/trilio-site-recovery-for-openstack),
+owned by the TSR-O team. It is an interactive operations guide for cloud
+administrators and tenants, for Claude Code, Codex and Cursor.
+Built with [trilio-agent-plugin-kit](https://github.com/trilioData/trilio-agent-plugin-kit) 0.1.0.
 
 ## What it does
 
@@ -17,76 +15,52 @@ RPO compliance — grounded in live product documentation via
   planned/unplanned failover, failback, non-disruptive test failover, monitor
   RPO compliance, and troubleshoot common errors.
 
-Every answer is grounded in the current published documentation — the skill
-fetches the relevant doc page from git2docs before guiding you, so guidance
-stays accurate as the product evolves.
+Every answer is grounded in the current published documentation: the skill
+fetches the relevant page from the official TSR for OpenStack docs before
+guiding you, so guidance stays accurate as the product evolves.
 
 ## Install
 
-In Claude Code, add this repo as a plugin marketplace and install the skill:
+The plugin installs from the
+[Trilio agent marketplace](https://github.com/trilioData/trilio-agent-marketplace).
 
-```
-/plugin marketplace add trilioData/tsr-openstack-skill
-/plugin install tsr-openstack-skill
-```
+**Claude Code**
 
-Or, to use it without the plugin system, copy the skill into your skills
-directory:
-
-```bash
-git clone https://github.com/trilioData/tsr-openstack-skill /tmp/tsr-skill
-cp -r /tmp/tsr-skill/skills/tsr-guide ~/.claude/skills/tsr-guide
+```sh
+claude plugin marketplace add trilioData/trilio-agent-marketplace
+claude plugin install site-recovery-openstack@trilio
 ```
 
-## Setup
+Then invoke the skill with `/site-recovery-openstack:tsr-guide`. It asks whether
+you are a cloud administrator or a tenant, then walks you through the relevant
+workflows.
 
-The skill pulls live documentation from git2docs. To connect:
+**Codex**
 
-1. In [git2docs](https://git2docs.com), go to **Settings → Access tokens** and
-   create a token (`g2d_…`, shown once). Export it:
+```sh
+codex plugin marketplace add trilioData/trilio-agent-marketplace
+codex plugin add site-recovery-openstack@trilio
+```
 
-   ```bash
-   export GIT2DOCS_TOKEN=g2d_…
-   ```
+**Cursor**
 
-2. Add the MCP server to your project's `.mcp.json`
-   (see [`.mcp.json.example`](./.mcp.json.example)):
+```sh
+cursor-agent plugin marketplace add https://github.com/trilioData/trilio-agent-marketplace
+```
 
-   ```json
-   {
-     "mcpServers": {
-       "trilio-site-recovery": {
-         "type": "http",
-         "url": "https://git2docs.com/api/mcp/YOUR_ORG/trilio-site-recovery-for-openstack/agent",
-         "headers": {
-           "Authorization": "Bearer ${GIT2DOCS_TOKEN}"
-         }
-       }
-     }
-   }
-   ```
+Then install the plugin with `/plugins` in a Cursor session.
 
-   Replace `YOUR_ORG` with your git2docs organisation slug.
-
-3. In Claude Code, invoke the skill:
-
-   ```
-   /tsr-guide
-   ```
-
-   It will ask whether you are a cloud administrator or tenant, then walk you
-   through the relevant workflows.
+The plugin connects to the official docs MCP server,
+`https://docs-tsr.trilio.io/api/mcp/trilio-site-recovery-for-openstack`. It
+needs no token or other setup.
 
 ## What you need
 
-- **Claude Code** — the CLI, desktop app, or web app
+- **An agent tool:** Claude Code, Codex or Cursor
 - **An OpenStack environment** (≥ Victoria) with Trilio Site Recovery deployed,
   or access to one you are setting up
-- **The `openstack dr` CLI plugin** — installed separately with
+- **The `openstack dr` CLI plugin**, installed separately with
   `pip install -e ./client` from the TSR repository root
-- *(Optional)* A git2docs access token if you want the skill to pull live
-  documentation (without it, the skill still works using its built-in
-  reference material)
 
 ## Covered workflows
 
@@ -116,6 +90,35 @@ The skill pulls live documentation from git2docs. To connect:
 | Recovery points | `openstack dr recovery point list/create <pg-id>` |
 | Reconcile | `openstack dr protection group reconcile <pg-id>` |
 
+## Layout
+
+| Path | What it is |
+| --- | --- |
+| `plugins/site-recovery-openstack/plugin.yaml` | Portable source: manifest and MCP servers. **Edit this.** |
+| `plugins/site-recovery-openstack/skills/` | Skills, shared by every agent tool |
+| `plugins/site-recovery-openstack/.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.mcp.json`, `mcp.json` | Generated. CI fails if edited by hand |
+| `evals/` | Eval cases |
+
+## Develop
+
+```sh
+git clone git@github.com:trilioData/trilio-agent-plugin-kit.git .pluginkit -b 0.1.0
+pip install pyyaml
+python .pluginkit/pluginkit.py validate .
+python .pluginkit/pluginkit.py generate .        # after editing plugin.yaml or skills
+claude --plugin-dir plugins/site-recovery-openstack      # try it in Claude Code
+```
+
+## Release
+
+1. Bump `version` in `plugin.yaml`, run `generate`, and merge.
+2. Tag the merged commit `site-recovery-openstack/<version>` and push the tag. The release
+   workflow checks the tag against `plugin.yaml`, then builds the zip and GitHub release.
+3. The platform group pins the tag in
+   [trilio-agent-marketplace](https://github.com/trilioData/trilio-agent-marketplace).
+
+CI needs the org secret `PLUGINKIT_TOKEN` (read access to the kit repo).
+
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT. See [LICENSE](./LICENSE).
